@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
 import LeftBar from './LeftBar';
 import MiddleBar from './MiddleBar';
 import RightBar from './RightBar';
 
 function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <nav className="w-full fixed top-0 bg-white shadow-md z-50">
