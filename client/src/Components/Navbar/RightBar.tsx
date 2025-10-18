@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { MdClose } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircleHelp } from "lucide-react"; // updated to correct lucide icon
+import { CircleHelp, MessageCircle } from "lucide-react"; // updated to correct lucide icon
+import { Heart } from 'lucide-react';
+import { CgProfile } from "react-icons/cg";
+import './RightBar.css'
 
 function RightBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,17 +63,20 @@ function RightBar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-10 right-0 mt-2  bg-white rounded-lg shadow-lg z-50 p-3"
+              className="drawer absolute top-10 right-0 mt-2  bg-white rounded-lg shadow-lg z-50 p-3"
             >
               <ul className="py-2">
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full text-nowrap">Become a host <p className="text-[14px] text-gray-500 text-nowrap">If you have something to sale or rent</p></li>
+                <li className="px-4 py-2 font-bold text-[19px] hover:bg-gray-100 cursor-pointer rounded-full text-nowrap">Become a host <p className="text-[14px] text-gray-500 text-nowrap">If you have something to sale or rent</p></li>
                 <hr className="mb-2 mt-2 text-gray-300" />
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">Profile</li>
+                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full "><CgProfile className="inline text-2xl mb-1"/> Profile</li>
+                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full"><Heart className="inline mb-1"/> Wishlists</li>
+                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full"><MessageCircle className="inline mb-1"/> Messages</li>
+                <hr className="mb-2 mt-2 text-gray-300" />
                 <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">Logout</li>
                 <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">Login or Sign up</li>
                 <hr className="mb-2 mt-2 text-gray-300" />
                 <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">
-                  Help <CircleHelp className="inline mb-0.5" />
+                  <CircleHelp className="inline mb-0.5" /> Help 
                 </li>
               </ul>
             </motion.div>
@@ -82,3 +88,4 @@ function RightBar() {
 }
 
 export default RightBar;
+

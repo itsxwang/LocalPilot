@@ -2,16 +2,16 @@ import LeftBar from './LeftBar';
 import MiddleBar from './MiddleBar';
 import RightBar from './RightBar';
 
-function Navbar() {
+function Navbar({ item }: { item: string }) {
 
   return (
     <nav className="w-full fixed top-0 bg-white shadow-md z-50">
       {/* Desktop Navigation */}
-      <div className="hidden md:flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+      <div className="hidden md:flex justify-between items-center px-6 py-4  mx-auto">
         <div className="min-w-[200px]"> {/* Added minimum width */}
           <LeftBar />
         </div>
-        <MiddleBar />
+        <MiddleBar item={item} />
         <RightBar />
       </div>
 
@@ -48,7 +48,7 @@ function Navbar() {
         >
           <div className="px-4 py-3 space-y-4">
             <div className="flex justify-center">
-              <MiddleBar />
+              <MiddleBar item={item}/>
             </div>
             <div className="flex justify-center">
             </div>
