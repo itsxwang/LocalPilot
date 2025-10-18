@@ -6,7 +6,7 @@ export type services = {
     description: string,
     category: string,
 
-    types: {title: string, price: number, min: number, description: string, images: string[]}[],
+    types: {title: string, price: number, min: number, description: string, images: string }[],
     timing: "Morning" | "Afternoon" | "Evening",
     language: string, 
     signLanguage: boolean,
@@ -21,3 +21,5 @@ export type services = {
     created_at: string
 
 }
+
+// done

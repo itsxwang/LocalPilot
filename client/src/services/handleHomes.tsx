@@ -3,22 +3,29 @@ export type Homes = {
     id: string,
     host_id: string, 
 
+    price: number, // price per night
     title: string,
-    description: string,
+    location: string,
+    additional_info: string[],
+    allowed: { Adults: false|number, Children: false|number, Infants: false|number},
+    minStay: number, // in nights
+
+    iamges: {title: string[] }[],
+    description: {title: string, desc: string},
+    amenities: string[],
+    
+    
+    timePeriod: string,
     category: string,
 
-    types: {title: string, price: number, per: string, min: number, description: string, images: string[]}[],
-    timing: "Morning" | "Afternoon" | "Evening",
-    language: string, 
-    signLanguage: boolean,
     Duration: string,
 
     
     thingsToKnow: {title: string}[] | null,
 
-    metLocation: {title: string, location: string, subLocation: string | null},
 
     is_active: boolean,
     created_at: string
 
 }
+// done 
