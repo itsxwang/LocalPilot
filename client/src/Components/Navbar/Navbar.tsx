@@ -7,9 +7,11 @@ function Navbar({ item }: { item: string }) {
   return (
     <nav className="w-full fixed top-0 bg-white shadow-md z-50">
       {/* Desktop Navigation */}
+
       <div className="hidden md:flex justify-between items-center px-6 py-4  mx-auto">
         <div className="min-w-[200px]"> {/* Added minimum width */}
           <LeftBar />
+         
         </div>
         <MiddleBar item={item} />
         <RightBar />

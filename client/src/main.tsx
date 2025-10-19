@@ -9,6 +9,10 @@ import Products from "./Components/Products/Products";
 import Experiences from "./Components/Experiences/Experiences";
 import Homes from "./Components/Homes/Homes";
 
+
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -34,6 +38,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <GoogleOAuthProvider
+    clientId={import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID as string}
+    >
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
   </StrictMode>,
 )

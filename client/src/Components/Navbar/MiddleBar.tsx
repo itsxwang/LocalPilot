@@ -70,6 +70,7 @@ function MiddleBar({ item }: { item: string }) {
 
 
       </div>
+
     </div>
   );
 }

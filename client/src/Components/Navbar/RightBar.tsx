@@ -1,4 +1,6 @@
+
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { MdClose } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,9 +8,13 @@ import { CircleHelp, MessageCircle } from "lucide-react"; // updated to correct 
 import { Heart } from 'lucide-react';
 import { CgProfile } from "react-icons/cg";
 import './RightBar.css'
+import LoginSign from "../loginsignup/loginsign";
 
 function RightBar() {
+  
+
   const [isOpen, setIsOpen] = useState(false);
+  const [login, setLogin] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -68,21 +74,26 @@ function RightBar() {
               <ul className="py-2">
                 <li className="px-4 py-2 font-bold text-[19px] hover:bg-gray-100 cursor-pointer rounded-full text-nowrap">Become a host <p className="text-[14px] text-gray-500 text-nowrap">If you have something to sale or rent</p></li>
                 <hr className="mb-2 mt-2 text-gray-300" />
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full "><CgProfile className="inline text-2xl mb-1"/> Profile</li>
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full"><Heart className="inline mb-1"/> Wishlists</li>
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full"><MessageCircle className="inline mb-1"/> Messages</li>
+                
+                    <Link to="/profile" className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full "><CgProfile className="inline text-2xl mb-1" /> Profile</Link>
+                    <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full"><Heart className="inline mb-1" /> <Link to="/wishlists">Wishlists </Link></li>
+                    <Link to="/messages" className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full"><MessageCircle className="inline mb-1" /> Messages</Link>
+                    <hr className="mb-2 mt-2 text-gray-300" />
+
+                <li onClick={() => setLogin(prevlogin => !prevlogin)}  className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">Log in or Sign up</li> 
+                 <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">Logout</li>
+                
+
                 <hr className="mb-2 mt-2 text-gray-300" />
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">Logout</li>
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">Login or Sign up</li>
-                <hr className="mb-2 mt-2 text-gray-300" />
-                <li className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">
-                  <CircleHelp className="inline mb-0.5" /> Help 
-                </li>
+                <Link to="/help" className="px-4 py-2 text-[19px] hover:bg-gray-100 cursor-pointer rounded-full">
+                  <CircleHelp className="inline mb-0.5" /> Help
+                </Link>
               </ul>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+      <LoginSign show={login} onClose={() => setLogin(false)} />
     </div>
   );
 }
