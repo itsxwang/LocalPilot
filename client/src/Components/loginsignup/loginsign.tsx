@@ -5,19 +5,40 @@ import { IoClose } from "react-icons/io5";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import "./loginsign.css";
+import axiosClient from "../../APIs/axios";
 
 interface LoginSignupProps {
     show: boolean;
     onClose: () => void;
 }
 
+interface AuthError {
+    field?: string;
+    message: string;
+}
+
+interface ApiError {
+    response?: {
+        data?: {
+            message?: string;
+        };
+    };
+    message?: string;
+}
+
 const LoginSignup = ({ show, onClose }: LoginSignupProps) => {
+    // Form state
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
 
+    // UI state
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<AuthError | null>(null);
+
+    // Handle ESC key
     useEffect(() => {
         const handleEscKey = (event: KeyboardEvent) => {
             if (event.key === "Escape" && show) onClose();
@@ -26,36 +47,126 @@ const LoginSignup = ({ show, onClose }: LoginSignupProps) => {
         return () => document.removeEventListener("keydown", handleEscKey);
     }, [show, onClose]);
 
+    // Form validation
+    const validateForm = (): boolean => {
+        if (!email || !password) {
+            setError({ message: "Email and password are required" });
+            return false;
+        }
+
+        if (!isLoginMode && !firstName) {
+            setError({ field: "firstName", message: "First name is required for signup" });
+            return false;
+        }
+
+        if (!email.includes("@")) {
+            setError({ field: "email", message: "Please enter a valid email address" });
+            return false;
+        }
+
+        if (password.length < 6) {
+            setError({ field: "password", message: "Password must be at least 6 characters" });
+            return false;
+        }
+
+        setError(null);
+        return true;
+    };
+
+    // Regular login/signup
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!validateForm()) return;
+
+        setIsLoading(true);
+        setError(null);
+
         try {
-            const response = await fetch(`/api/users/${isLoginMode ? "login" : "signup"}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+            const response = await axiosClient.post(
+                `/api/users/${isLoginMode ? "login" : "signup"}`,
+                {
                     email,
                     password,
                     ...(isLoginMode ? {} : { firstName, lastName }),
-                }),
-            });
-            if (response.ok) {
+                }
+            );
+
+            if (response.status === 200) {
+                // Store the token
+                const { token } = response.data;
+                localStorage.setItem("token", token);
+
+                // Close the modal
                 onClose();
+
+                // You might want to update your auth context here
+                // setAuth({ token, user: response.data.user });
             }
         } catch (error) {
-            console.error("Error:", error);
+            const apiError = error as ApiError;
+            setError({
+                message: apiError.response?.data?.message || apiError.message || "Authentication failed. Please try again."
+            });
+            console.error("Error:", apiError);
+        } finally {
+            setIsLoading(false);
         }
     };
 
 
+    // Google login implementation
     const googleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
-            const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-                headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-            });
-            const userInfo = await res.json();
-            console.log(userInfo);
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                // Get user info from Google
+                const userInfoRes = await fetch(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${tokenResponse.access_token}`
+                        },
+                    }
+                );
+
+                if (!userInfoRes.ok) {
+                    throw new Error('Failed to get Google user info');
+                }
+
+                const userInfo = await userInfoRes.json();
+
+                // Send to our backend
+                const response = await axiosClient.post('/api/users/google-login', userInfo);
+
+                if (response.status === 200) {
+                    // Store the token
+                    const { token } = response.data;
+                    localStorage.setItem("token", token);
+
+                    // Close the modal
+                    onClose();
+
+                    // You might want to update your auth context here
+                    // setAuth({ token, user: response.data.user });
+                }
+            } catch (error) {
+                const apiError = error as ApiError;
+                setError({
+                    message: apiError.response?.data?.message ||
+                        apiError.message ||
+                        "Google authentication failed. Please try again."
+                });
+            } finally {
+                setIsLoading(false);
+            }
         },
-        onError: () => console.log("Login Failed"),
+        onError: () => {
+            setError({
+                message: "Google authentication failed. Please try again."
+            });
+        },
     });
 
 
@@ -119,6 +230,16 @@ const LoginSignup = ({ show, onClose }: LoginSignupProps) => {
                                 Welcome to Tork
                             </motion.h2>
 
+                            {error && (
+                                <motion.div
+                                    className="error-message"
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                >
+                                    {error.message}
+                                </motion.div>
+                            )}
+
                             <motion.form
                                 onSubmit={handleSubmit}
                                 initial={{ opacity: 0 }}
@@ -150,8 +271,7 @@ const LoginSignup = ({ show, onClose }: LoginSignupProps) => {
                                                     type="text"
                                                     value={lastName}
                                                     onChange={(e) => setLastName(e.target.value)}
-                                                    placeholder="Last name"
-                                                    required
+                                                    placeholder="Last name(optional)"
                                                 />
                                             </div>
                                         </motion.div>
@@ -185,8 +305,13 @@ const LoginSignup = ({ show, onClose }: LoginSignupProps) => {
                                     className="submit-button"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
+                                    disabled={isLoading}
                                 >
-                                    {isLoginMode ? "Log in" : "Sign up"}
+                                    {isLoading ? (
+                                        <span className="loading-spinner" />
+                                    ) : (
+                                        isLoginMode ? "Log in" : "Sign up"
+                                    )}
                                 </motion.button>
                             </motion.form>
 
